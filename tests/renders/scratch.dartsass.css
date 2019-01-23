@@ -1,0 +1,64 @@
+/*
+  RULES
+    - $range ref units must match ?
+    - $range val units must match ?
+    - if any val unit is em, 1em domain is assumed (font)
+    - for 100% or 100vw domains, values can mix px and rem
+
+*/
+/*
+  sass-lerp
+
+  concept
+  work with units that grow in value
+    vw/vw -> viewport
+    em -> font-size
+    % -> font-size, width, height
+*/
+.test-font {
+  result: 1.5;
+  result: 0.15;
+  result: 13.3333333333;
+  result: 0.8333333333;
+  result: 1.2;
+}
+
+.test-vw {
+  result: calc(75vw - 100px);
+}
+
+.test-vw {
+  result: calc(8vw + 16px);
+}
+
+.test-em {
+  result: calc(0.8333333333em + 13.3333333333px);
+  result: calc(0.8333333333em + 13.3333333333px);
+  result: calc(30% + 20px);
+  result: calc(110% - 60px);
+  result: calc(0.3% + 0.2px);
+  result: calc(8.2051282051% + 14.358974359px);
+}
+
+.test-em {
+  dim-1: 20px;
+  dim-2: 80px;
+  val-1: 1.5;
+  val-2: 4;
+  return: calc(0.8333333333em + 13.3333333333px);
+  dim-1: 20px;
+  dim-2: 80px;
+  val-1: 1.5;
+  val-2: 4;
+  return: calc(0.8333333333em + 13.3333333333px);
+  dim-1: 100px;
+  dim-2: 200px;
+  val-1: 0.5;
+  val-2: 0.8;
+  return: calc(30% + 20px);
+  dim-1: 100px;
+  dim-2: 200px;
+  val-1: 0.5;
+  val-2: 1.6;
+  return: calc(110% - 60px);
+}

@@ -1,0 +1,57 @@
+{
+  "name": "@lunelson/sass-lerp",
+  "version": "0.9.0",
+  "description": "Dynamic linear-interpolating values in the form of CSS calc() expressions",
+  "keywords": [
+    "calc",
+    "lerp",
+    "dart-sass",
+    "libsass",
+    "sass"
+  ],
+  "homepage": "https://github.com/lunelson/sass-lerp#readme",
+  "bugs": {
+    "url": "https://github.com/lunelson/sass-lerp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lunelson/sass-lerp.git"
+  },
+  "license": "MIT",
+  "author": "Lu Nelson",
+  "main": "_index.scss",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "ava",
+    "start": "ava --watch --serial"
+  },
+  "devDependencies": {
+    "@lunelson/sass-calc": "^1.1.1",
+    "@lunelson/sass-throw": "^2.0.0-rc.4",
+    "ava": "^1.0.1",
+    "del": "^3.0.0",
+    "node-sass": "^4.11.0",
+    "sass": "^1.15.2",
+    "write": "^1.0.3"
+  },
+  "peerDependencies": {
+    "@lunelson/sass-calc": "^1.1.1",
+    "@lunelson/sass-throw": "^2.0.0-rc.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "ava": {
+    "verbose": true,
+    "files": [
+      "tests/*{.js,.scss}"
+    ],
+    "sources": [
+      "_index.scss",
+      "scss/**/*.scss",
+      "!**/_*/**"
+    ]
+  }
+}

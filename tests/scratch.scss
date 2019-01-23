@@ -1,0 +1,53 @@
+@import 'deps';
+
+/*
+  sass-lerp
+
+  concept
+  work with units that grow in value
+    vw/vw -> viewport
+    em -> font-size
+    % -> font-size, width, height
+*/
+
+// .test {
+//   result: relativize(20px, 3rem); // 20/48 = 0.4166666667
+//   result: relativize(1.5em, 20px); // 1.5
+//   result: lerp(( 200px: 50px, 400px: 200px ));
+//   result: lerp(( 20px: 1.5em, 80px: 1em ), 'em');
+// }
+
+.test-font {
+  result: rel(1.5em);
+  result: rel(15%);
+  result: rel2(1.5em, 20px);
+  // result: relativize(1.5em, 20px);
+  result: rel2(1.5rem, 20px);
+  // result: relativize(1.5rem, 20px);
+  result: rel2(20px, 1.5rem);
+  // result: relativize(20px, 1.5rem);
+}
+
+.test-vw {
+  result: lerp(( 200px: 50px, 400px: 200px ));
+}
+
+.test-vw {
+  result: lerp(( 200px: 2rem, 400px: 3rem ));
+}
+
+.test-em {
+  result: lerp(( 20px: 1.5em, 80px: 1em ), 1em);
+  result: lerp(( 20px: 30px, 80px: 80px ), 1em);
+  result: lerp(( 100px: 50px, 200px: 80px ), 100%);
+  result: lerp(( 100px: 50%, 200px: 80% ), 100%);
+  result: lerp(( 100px: 0.5, 200px: 0.8 ), 100%);
+  result: lerp(( 20px: 1rem, 50rem: 5rem ), 100%);
+}
+.test-em {
+  @include lerp(( 20px: 1.5em, 80px: 1em ), 1em);
+  @include lerp(( 20px: 30px, 80px: 80px ), 1em);
+  @include lerp(( 100px: 50px, 200px: 80px ), 100%);
+  @include lerp(( 100px: 50%, 200px: 80% ), 100%);
+  // @include lerp(( 20px: 1rem, 50rem: 5rem ), 100%);
+}

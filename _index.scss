@@ -1,0 +1,137 @@
+//                           _
+//                          | |
+//  ___  __ _ ___ ___ ______| | ___ _ __ _ __
+// / __|/ _` / __/ __|______| |/ _ \ '__| '_ \
+// \__ \ (_| \__ \__ \      | |  __/ |  | |_) |
+// |___/\__,_|___/___/      |_|\___|_|  | .__/
+//                                      | |
+//                                      |_|
+
+// helpers
+@function one($unit:'') {
+  $one: ('em': 1em, 'ex': 1ex, 'ch': 1ch, 'rem': 1rem, '%': 1%, 'vw': 1vw, 'vh': 1vh, 'vmin': 1vmin, 'vmax': 1vmax, 'cm': 1cm, 'mm': 1mm, 'in': 1in, 'px': 1px, 'pt': 1pt, 'pc': 1pc, 'deg': 1deg, 'grad': 1grad, 'rad': 1rad, 'turn': 1turn, 's': 1s, 'ms': 1ms, 'dpi': 1dpi, 'dpcm': 1dpcm, 'dppx': 1dppx);
+  @return map-get($one, $unit) or 1;
+}
+
+// strip unit from number
+@function strip($n) {
+  @if not is-number($n) { @return throw-error("cannot manipulate unit of non-number"); }
+  @return if(unitless($n), $n, $n / one(unit($n)));
+}
+@function strip-alt($n){
+  @if not is-number($n) { @return throw-error("cannot manipulate unit of non-number"); }
+  @return if(unitless($n), $n, $n / (0 * $n + 1));
+}
+
+// add/coerce unit on number
+@function assert($n, $unit: '') {
+  @if not is-number($n) { @return throw-error("cannot manipulate unit of non-number"); }
+  @return strip($n) * one($unit);
+}
+
+// // return unitless relative number
+// @function relativize($val, $ref: 1, $rem-px: 16) {
+//   $val-unit: unit($val);
+//   $ref-unit: unit($ref);
+//   // checks
+//   @if $ref-unit == '%' { @warn 'cannot relativize value to a relative reference; returning input value'; @return $val; }
+//   // corrections
+//   @if $val-unit == '%' { $ref: 100; }
+//   @else if $val-unit == 'px' and index('em' 'rem', $ref-unit) { $ref: strip($ref) * $rem-px; }
+//   @else if $ref-unit == 'px' and index('em' 'rem', $val-unit) { $ref: strip($ref) / $rem-px; }
+//   @else if not unitless($ref) { $ref: strip($ref); }
+//   @return strip($val) / $ref;
+// }
+
+@function rel($val) { @return strip($val) / if(unit($val) == '%',100,1); }
+@function rel2($ref, $val, $rem-px: 16) {
+  $val-unit: unit($val);
+  @if index('em' '%', unit($val)) { @return rel($val); }
+  // @if $val-unit == 'em' { @return strip($val); }
+  // @if $val-unit == '%' { @return strip($val)/100; }
+  $ref-unit: unit($ref);
+  @if $val-unit == $ref-unit { @return $val/$ref; }
+  @else if $ref-unit == 'px' and $val-unit == 'rem' { $ref: (strip($ref) / $rem-px); }
+  @else if $val-unit == 'px' and $ref-unit == 'rem' { $ref: (strip($ref) * $rem-px); }
+  @else if not unitless($ref) { $ref: strip($ref); }
+  @return strip($val) / $ref;
+}
+
+//
+// viewport unit crazy shit
+// --------------------------------------------------------------------------
+
+/*
+  RULES
+    - $range ref units must match ?
+    - $range val units must match ?
+    - if any val unit is em, 1em domain is assumed (font)
+    - for 100% or 100vw domains, values can mix px and rem
+
+*/
+
+@function lerp($range, $mult: 100vw, $rem-px: 16) {
+  $refs: map-keys($range);
+  $vals: map-values($range);
+  $ref-1: nth($refs, 1);
+  $ref-2: nth($refs, 2);
+  $ref-2: rel2($ref-1, $ref-2, $rem-px) * $ref-1;
+  $val-1: nth($vals, 1);
+  $val-1: rel2($ref-1, $val-1, $rem-px);
+  $val-2: nth($vals, 2);
+  @if index('em' '%', unit($val-2)) {
+    $val-2: rel2($ref-1, $ref-2, $rem-px) * rel($val-2);
+  } @else {
+    $val-2: rel2($ref-1, $val-2, $rem-px);
+  }
+  $rate: ($val-2 - $val-1) * $ref-1 / ($ref-2 - $ref-1);
+  $base: ($val-1 - $rate) * $ref-1;
+  @return add($rate * $mult, $base);
+}
+
+@mixin lerp($minmax, $mult: 100vw) {
+  $dims: map-keys($minmax);
+  $vals: map-values($minmax);
+  $dim-1: nth($dims, 1);
+  dim-1: $dim-1;
+  $dim-2: nth($dims, 2);
+  $dim-2: rel2($dim-1, $dim-2) * $dim-1;
+  dim-2: $dim-2;
+  $val-1: nth($vals, 1);
+  $val-1: rel2($dim-1, $val-1);
+  val-1: $val-1;
+  $val-2: nth($vals, 2);
+  @if index('em' '%', unit($val-2)) {
+    $val-2: rel2($dim-1, $dim-2) * rel($val-2);
+  } @else {
+    $val-2: rel2($dim-1, $val-2);
+  }
+  val-2: $val-2;
+  $rate: ($val-2 - $val-1) * $dim-1 / ($dim-2 - $dim-1);
+  $base: ($val-1 - $rate) * $dim-1;
+  return: add($rate * $mult, $base);
+}
+
+// @function vw-lerp($config) {
+//   $dims: map-keys($config);
+//   $vals: map-values($config);
+//   $dim-1: nth($dims, 1);
+//   $val-1: relativize(nth($vals, 1), $dim-1);
+//   $dim-2: relativize(nth($dims, 2), $dim-1) * $dim-1;
+//   $val-2: relativize(nth($vals, 2), $dim-1);
+//   $rate: ($val-2 - $val-1) * $dim-1 / ($dim-2 - $dim-1) * 100;
+//   $base: ($val-1 - $rate/100) * $dim-1;
+//   @return calc(#{assert($rate, 'vw')} + #{$base});
+// }
+
+// @function vh-lerp($config) {
+//   $dims: map-keys($config);
+//   $vals: map-values($config);
+//   $dim-1: nth($dims, 1);
+//   $val-1: relativize(nth($vals, 1), $dim-1);
+//   $dim-2: relativize(nth($dims, 2), $dim-1) * $dim-1;
+//   $val-2: relativize(nth($vals, 2), $dim-1);
+//   $rate: ($val-2 - $val-1) * $dim-1 / ($dim-2 - $dim-1) * 100;
+//   $base: ($val-1 - $rate/100) * $dim-1;
+//   @return calc(#{assert($rate, 'vh')} + #{$base});
+// }
