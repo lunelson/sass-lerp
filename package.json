@@ -25,7 +25,8 @@
   },
   "scripts": {
     "test": "ava",
-    "start": "ava --watch --serial"
+    "start": "ava --watch --serial",
+    "beforeStage": "npx auto-changelog"
   },
   "devDependencies": {
     "@lunelson/sass-calc": "^1.1.1",
@@ -53,5 +54,10 @@
       "scss/**/*.scss",
       "!**/_*/**"
     ]
+  },
+  "release-it": {
+    "github": {
+      "release": true
+    }
   }
 }
