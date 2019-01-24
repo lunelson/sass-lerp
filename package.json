@@ -1,7 +1,7 @@
 {
   "name": "@lunelson/sass-lerp",
   "version": "0.9.0",
-  "description": "Dynamic linear-interpolating values in the form of CSS calc() expressions",
+  "description": "Create dynamically interpolated values with CSS calc() expressions",
   "keywords": [
     "calc",
     "lerp",
