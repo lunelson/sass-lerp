@@ -1,74 +1,69 @@
 @import 'deps';
 
-/*
-  sass-lerp
-
-  concept
-    create a interpolated value, with CSS calc() expression in terms of a dynamic domain
-    reference of these domains may depend on property to which you apply it
-      vw/vw -> viewport
-      em -> font-size
-      % -> font-size, width, height (depending on property applied)
-  qualifications
-    result relies on dynamic domain: em, % or vw/vh/vmax/vmin
-      therefore results can only express a linear dimension, i.e. no rotation, no scale, no colors
-      cannot be applied to the same domain it refers to e.g. width: [lerp %], since % refers to width
-    reference points must be absolute units e.g. px, rem
-
-*/
-
-// .test {
-//   result: relativize(20px, 3rem); // 20/48 = 0.4166666667
-//   result: relativize(1.5em, 20px); // 1.5
-//   result: lerp(( 200px: 50px, 400px: 200px ));
-//   result: lerp(( 20px: 1.5em, 80px: 1em ), 'em');
-// }
-
-/*
-
-px
-rem
+// concept
+//   create a interpolated value, with CSS calc() expression in terms of a dynamic domain
+//   reference of these domains may depend on property to which you apply it
+//     vw/vw -> viewport
+//     em -> font-size
+//     % -> font-size, width, height (depending on property applied)
+// qualifications
+//   result relies on dynamic domain: em, % or vw/vh/vmax/vmin
+//     therefore results can only express a linear dimension, i.e. no rotation, no scale, no colors
+//     cannot be applied to the same domain it refers to e.g. width: [lerp %], since % refers to width
+//   reference points must be absolute units e.g. px, rem
 
 
+// RULES
+// - $range ref units must match ?
+// - $range val units must match ?
+// - if any val unit is em, 1em domain is assumed (font)
+// - for 100% or 100vw domains, values can mix px and rem
 
-*/
+// 0. valid domains are only 1em, 100%, 100vw, 100vh, 100vmin, 100vmax
+// 1. first key unit defines the final offset unit; therefore
+  // % and em not allowed as key units; only px or rem (note px-rem arg)
+  // key units need not match however
+
+// 2. only certain values are valid for given domain
+  // for domain 100v*, px, rem (because em and % refer to unknown intermediary)
+  // for domain 100%: px, rem, %, (em, conditionally; but we'll say no)
+  // for domain 1em: px, rem, %, em
+
+// e.g.
+  // lerp(100%, (100px: 5rem, 200px: 3rem));
+  // lerp(100%, (100px: 50% 200px: 30%));
+
+// relativize($val, $ref)
+// normalize($rel)
 
 $throw-catch: true;
 
-.test-font {
-  result: --sl-rel(1.5em);
-  result: --sl-rel(15%);
-  result: --sl-rel-to(1.5em, 20px);
-  // result: relativize(1.5em, 20px);
-  result: --sl-rel-to(1.5rem, 20px);
-  // result: relativize(1.5rem, 20px);
-  result: --sl-rel-to(20px, 1.5rem);
-  result: --sl-rel-to(20%, 1.5rem);
-  result: --sl-rel-to(20em, 1.5rem);
-  // result: relativize(20px, 1.5rem);
+.private {
+  result: --sl-normalize(1.5em);
+  result: --sl-normalize(15%);
+  /* NB ref units will always be px or rem */
+  result: --sl-relativize(20px, 1.5rem);
+  result: --sl-relativize(1.5rem, 20px);
 }
 
-.test-vw {
+.bad-args {
+  /* domain units must be em, %, or one of vw, vh, vmin, vmax */
+  result: lerp((), 1rem);
+  /* key units must be px or rem */
+  result: lerp(( 50%: 1rem, 80%: 5rem ), 1em);
+}
+
+.viewport-relative {
   result: lerp(( 200px: 50px, 400px: 200px ));
-}
-
-.test-vw {
   result: lerp(( 200px: 2rem, 400px: 3rem ));
 }
 
-.test-em {
+.parent-relative {
   result: lerp(( 20px: 1.5em, 80px: 1em ), 1em);
   result: lerp(( 20px: 30px, 80px: 80px ), 1em);
   result: lerp(( 100px: 50px, 200px: 80px ), 100%);
   result: lerp(( 100px: 50%, 200px: 80% ), 100%);
-  result: lerp(( 100px: 0.5, 200px: 0.8 ), 100%);
-  result: lerp(( 20px: 1rem, 50rem: 5rem ), 100%);
-}
-.test-em {
-  @include lerp(( 20px: 1.5em, 80px: 1em ), 1em);
-  @include lerp(( 20px: 30px, 80px: 80px ), 1em);
-  @include lerp(( 100px: 50px, 200px: 80px ), 100%);
-  @include lerp(( 100px: 50%, 200px: 80% ), 100%);
-  // @include lerp(( 10%: 50px, 20%: 80px ), 100vw);
-  @include lerp(( 20px: 1rem, 50rem: 5rem ), 100%);
+  result: lerp(( 100px: 0.5em, 200px: 0.8em ), 100%); // disallow
+  result: lerp(( 100px: 0.5em, 200px: 0.8em ), 1em);
+  result: lerp(( 20rem: 1rem, 50rem: 5rem ), 100%);
 }

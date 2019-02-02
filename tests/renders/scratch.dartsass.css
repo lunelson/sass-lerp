@@ -1,86 +1,29 @@
-/*
-  RULES
-    - $range ref units must match ?
-    - $range val units must match ?
-    - if any val unit is em, 1em domain is assumed (font)
-    - for 100% or 100vw domains, values can mix px and rem
-
-*/
-/*
-  sass-lerp
-
-  concept
-    create a interpolated value, with CSS calc() expression in terms of a dynamic domain
-    reference of these domains may depend on property to which you apply it
-      vw/vw -> viewport
-      em -> font-size
-      % -> font-size, width, height (depending on property applied)
-  qualifications
-    result relies on dynamic domain: em, % or vw/vh/vmax/vmin
-      therefore results can only express a linear dimension, i.e. no rotation, no scale, no colors
-      cannot be applied to the same domain it refers to e.g. width: [lerp %], since % refers to width
-    reference points must be absolute units e.g. px, rem
-
-*/
-/*
-
-px
-rem
-
-
-
-*/
-.test-font {
+.private {
   result: 1.5;
   result: 0.15;
-  result: "ERROR: sass-lerp: reference units must be px or rem";
+  /* NB ref units will always be px or rem */
   result: 0.8333333333;
   result: 1.2;
-  result: "ERROR: sass-lerp: reference units must be px or rem";
-  result: "ERROR: sass-lerp: reference units must be px or rem";
 }
 
-.test-vw {
+.bad-args {
+  /* domain units must be em, %, or one of vw, vh, vmin, vmax */
+  result: "ERROR: bad mult unit";
+  /* key units must be px or rem */
+  result: "ERROR: bad key unit";
+}
+
+.viewport-relative {
   result: calc(75vw - 100px);
-}
-
-.test-vw {
   result: calc(8vw + 16px);
 }
 
-.test-em {
+.parent-relative {
   result: calc(0.8333333333em + 13.3333333333px);
   result: calc(0.8333333333em + 13.3333333333px);
   result: calc(30% + 20px);
   result: calc(110% - 60px);
-  result: calc(0.3% + 0.2px);
-  result: calc(8.2051282051% + 14.358974359px);
-}
-
-.test-em {
-  dim-1: 20px;
-  dim-2: 80px;
-  val-1: 1.5;
-  val-2: 4;
-  return: calc(0.8333333333em + 13.3333333333px);
-  dim-1: 20px;
-  dim-2: 80px;
-  val-1: 1.5;
-  val-2: 4;
-  return: calc(0.8333333333em + 13.3333333333px);
-  dim-1: 100px;
-  dim-2: 200px;
-  val-1: 0.5;
-  val-2: 0.8;
-  return: calc(30% + 20px);
-  dim-1: 100px;
-  dim-2: 200px;
-  val-1: 0.5;
-  val-2: 1.6;
-  return: calc(110% - 60px);
-  dim-1: 20px;
-  dim-2: 800px;
-  val-1: 0.8;
-  val-2: 4;
-  return: calc(8.2051282051% + 14.358974359px);
+  result: "ERROR: bad val unit";
+  result: calc(1.1em - 60px);
+  result: calc(13.3333333333% - 1.6666666667rem);
 }
