@@ -29,8 +29,8 @@
     "beforeStage": "npx auto-changelog"
   },
   "devDependencies": {
-    "@lunelson/sass-calc": "^1.1.1",
-    "@lunelson/sass-throw": "^2.0.0-rc.4",
+    "@lunelson/sass-calc": "^1.2.0",
+    "@lunelson/sass-throw": "^2.1.0",
     "ava": "^1.0.1",
     "del": "^3.0.0",
     "node-sass": "^4.11.0",
@@ -38,8 +38,8 @@
     "write": "^1.0.3"
   },
   "peerDependencies": {
-    "@lunelson/sass-calc": "^1.1.1",
-    "@lunelson/sass-throw": "^2.0.0-rc.4"
+    "@lunelson/sass-calc": "^1.2.0",
+    "@lunelson/sass-throw": "^2.1.0"
   },
   "publishConfig": {
     "access": "public"

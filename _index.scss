@@ -7,6 +7,9 @@
 //                                      | |
 //                                      |_|
 
+// TODO:
+// add function-exists() checks for peerDependencies
+
 @function --sl-strip($n){
   @return if(unitless($n), $n, $n / (0 * $n + 1));
 }
@@ -27,7 +30,7 @@
 }
 
 @function --sl-safe-unit($n) {
-  @if not type-of($n) == 'number' { @return throw-error('non-number'); }
+  @if not type-of($n) == 'number' { @return throw-error('lerp(): argument #{$n} invalid; must be a number'); }
   @return unit($n);
 }
 
@@ -43,25 +46,30 @@ $--sl-mult-vs-val: (
   'em': 'px' 'rem' '%' 'em',
 );
 
-@function lerp($range, $mult: 100vw, $rem-px: 16) {
+@function lerp($table, $domain: 100vw, $rem-px: 16) {
 
-  // $mult unit must be em, %, or one of vw, vh, vmin, vmax
-  @if not index(map-keys($--sl-mult-vs-val), --sl-safe-unit($mult)) { @return throw-error('bad mult unit'); }
-  $keys: map-keys($range);
-  $vals: map-values($range);
+  // $domain unit must be em, %, or one of vw, vh, vmin, vmax
+  @if not index(map-keys($--sl-mult-vs-val), --sl-safe-unit($domain)) {
+    @return throw-error('lerp($table, $domain: 100vw, $rem-px: 16): $domain [#{$domain}] invalid; unit must be one of the following: #{map-keys($--sl-mult-vs-val)}'); }
+  $keys: map-keys($table);
+  $vals: map-values($table);
   $key-1: nth($keys, 1);
   $key-2: nth($keys, 2);
 
   // $key units must be px or rem
-  @if not index('rem' 'px', --sl-safe-unit($key-1)) { @return throw-error('bad key unit'); }
-  @if not index('rem' 'px', --sl-safe-unit($key-2)) { @return throw-error('bad key unit'); }
+  @if not index('rem' 'px', --sl-safe-unit($key-1)) {
+    @return throw-error('lerp($table, $domain: 100vw, $rem-px: 16): $table key [#{$key-1}] invalid; unit must be rem or px'); }
+  @if not index('rem' 'px', --sl-safe-unit($key-2)) {
+    @return throw-error('lerp($table, $domain: 100vw, $rem-px: 16): $table key [#{$key-2}] invalid; unit must be rem or px'); }
   $val-1: nth($vals, 1);
   $val-2: nth($vals, 2);
 
-  // $val units depend on $mult unit
-  $val-units: map-get($--sl-mult-vs-val, unit($mult));
-  @if not index($val-units, --sl-safe-unit($val-1)) { @return throw-error('bad val unit'); }
-  @if not index($val-units, --sl-safe-unit($val-2)) { @return throw-error('bad val unit'); }
+  // $val units depend on $domain unit
+  $val-units: map-get($--sl-mult-vs-val, unit($domain));
+  @if not index($val-units, --sl-safe-unit($val-1)) {
+    @return throw-error('lerp($table, $domain: 100vw, $rem-px: 16): $table $val [#{$val-1}] invalid for $domain #{$domain}; unit must be one of the following: #{$val-units}'); }
+  @if not index($val-units, --sl-safe-unit($val-2)) {
+    @return throw-error('lerp($table, $domain: 100vw, $rem-px: 16): $table $val [#{$val-2}] invalid for $domain #{$domain}; unit must be one of the following: #{$val-units}'); }
 
   // calculate
   $key-2: --sl-relativize($key-2, $key-1, $rem-px) * $key-1;
@@ -71,7 +79,9 @@ $--sl-mult-vs-val: (
   } @else {
     $val-2: --sl-relativize($val-2, $key-1, $rem-px);
   }
-  $rate: ($val-2 - $val-1) * $key-1 / ($key-2 - $key-1);
-  $base: ($val-1 - $rate) * $key-1;
-  @return add($rate * $mult, $base);
+  $slope: ($val-2 - $val-1) * $key-1 / ($key-2 - $key-1);
+  $offset: ($val-1 - $slope) * $key-1;
+
+  // use sass-calc add, in order to flip if offset is negative
+  @return add($slope * $domain, $offset);
 }

@@ -8,9 +8,13 @@
 
 .bad-args {
   /* domain units must be em, %, or one of vw, vh, vmin, vmax */
-  result: "ERROR: bad mult unit";
-  /* key units must be px or rem */
-  result: "ERROR: bad key unit";
+  result: "ERROR: lerp($table, $domain: 100vw, $rem-px: 16): $domain [1rem] invalid; unit must be one of the following: vw, vh, vmin, vmax, %, em";
+  /* table key units must be px or rem */
+  result: "ERROR: lerp($table, $domain: 100vw, $rem-px: 16): $table key [50%] invalid; unit must be rem or px";
+  /* domain v* allows only px and rem table vals */
+  /* domain % allows only px, rem and % table vals */
+  result: "ERROR: lerp($table, $domain: 100vw, $rem-px: 16): $table $val [0.5em] invalid for $domain 100%; unit must be one of the following: px rem %";
+  /* domain em allows px, rem, % and em table vals */
 }
 
 .viewport-relative {
@@ -19,11 +23,16 @@
 }
 
 .parent-relative {
+  /* following should be equal */
   result: calc(0.8333333333em + 13.3333333333px);
   result: calc(0.8333333333em + 13.3333333333px);
-  result: calc(30% + 20px);
+  result: calc(0.8333333333em + 13.3333333333px);
+  /* the following will mean the same, if applied to a font-size relative property e.g line-height */
   result: calc(110% - 60px);
-  result: "ERROR: bad val unit";
   result: calc(1.1em - 60px);
+  /* container related */
+  result: calc(110% - 60px);
+  result: calc(30% + 20px);
   result: calc(13.3333333333% - 1.6666666667rem);
+  result: calc(100% - 10rem);
 }

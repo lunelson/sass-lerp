@@ -49,8 +49,12 @@ $throw-catch: true;
 .bad-args {
   /* domain units must be em, %, or one of vw, vh, vmin, vmax */
   result: lerp((), 1rem);
-  /* key units must be px or rem */
+  /* table key units must be px or rem */
   result: lerp(( 50%: 1rem, 80%: 5rem ), 1em);
+  /* domain v* allows only px and rem table vals */
+  /* domain % allows only px, rem and % table vals */
+  result: lerp(( 100px: 0.5em, 200px: 0.8em ), 100%);
+  /* domain em allows px, rem, % and em table vals */
 }
 
 .viewport-relative {
@@ -59,11 +63,16 @@ $throw-catch: true;
 }
 
 .parent-relative {
+  /* following should be equal */
+  result: lerp(( 20px: 150%, 80px: 100% ), 1em);
   result: lerp(( 20px: 1.5em, 80px: 1em ), 1em);
   result: lerp(( 20px: 30px, 80px: 80px ), 1em);
-  result: lerp(( 100px: 50px, 200px: 80px ), 100%);
+  /* the following will mean the same, if applied to a font-size relative property e.g line-height */
   result: lerp(( 100px: 50%, 200px: 80% ), 100%);
-  result: lerp(( 100px: 0.5em, 200px: 0.8em ), 100%); // disallow
   result: lerp(( 100px: 0.5em, 200px: 0.8em ), 1em);
+  /* container related */
+  result: lerp(( 100px: 50%, 200px: 80% ), 100%);
+  result: lerp(( 100px: 50px, 200px: 80px ), 100%);
   result: lerp(( 20rem: 1rem, 50rem: 5rem ), 100%);
+  result: lerp(( 20rem: 50%, 50rem: 80% ), 100%);
 }
