@@ -2,7 +2,7 @@
   result: 1.5;
   result: 0.15;
   /* NB ref units will always be px or rem */
-  result: 0.8333333333;
+  result: 0.83333;
   result: 1.2;
 }
 
@@ -24,15 +24,15 @@
 
 .parent-relative {
   /* following should be equal */
-  result: calc(0.8333333333em + 13.3333333333px);
-  result: calc(0.8333333333em + 13.3333333333px);
-  result: calc(0.8333333333em + 13.3333333333px);
+  result: calc(0.83333em + 13.33333px);
+  result: calc(0.83333em + 13.33333px);
+  result: calc(0.83333em + 13.33333px);
   /* the following will mean the same, if applied to a font-size relative property e.g line-height */
   result: calc(110% - 60px);
   result: calc(1.1em - 60px);
   /* container related */
   result: calc(110% - 60px);
   result: calc(30% + 20px);
-  result: calc(13.3333333333% - 1.6666666667rem);
+  result: calc(13.33333% - 1.66667rem);
   result: calc(100% - 10rem);
 }

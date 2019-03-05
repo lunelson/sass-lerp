@@ -25,7 +25,7 @@
   },
   "scripts": {
     "test": "ava",
-    "start": "ava --watch --serial",
+    "start": "ava --watch",
     "beforeStage": "npx auto-changelog"
   },
   "devDependencies": {
@@ -34,6 +34,7 @@
     "ava": "^1.0.1",
     "del": "^3.0.0",
     "node-sass": "^4.11.0",
+    "require-extension-hooks": "^0.3.3",
     "sass": "^1.15.2",
     "write": "^1.0.3"
   },
@@ -46,8 +47,17 @@
   },
   "ava": {
     "verbose": true,
+    "extensions": [
+      "scss"
+    ],
+    "compileEnhancements": false,
+    "require": [
+      "./tests/helpers/setup.js"
+    ],
     "files": [
-      "tests/*{.js,.scss}"
+      "tests/*.scss",
+      "!**/_*/**",
+      "!**/_*"
     ],
     "sources": [
       "_index.scss",
