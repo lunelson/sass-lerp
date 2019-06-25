@@ -31,12 +31,13 @@
   "devDependencies": {
     "@lunelson/sass-calc": "^1.2.0",
     "@lunelson/sass-throw": "^2.1.0",
-    "ava": "^1.0.1",
-    "del": "^3.0.0",
-    "node-sass": "^4.11.0",
+    "ava": "^2.4.0",
+    "del": "^5.1.0",
+    "node-sass": "^4.13.1",
     "require-extension-hooks": "^0.3.3",
-    "sass": "^1.15.2",
-    "write": "^1.0.3"
+    "sass": "^1.25.0",
+    "strip-css-comments": "^4.1.0",
+    "write": "^2.0.0"
   },
   "peerDependencies": {
     "@lunelson/sass-calc": "^1.2.0",
@@ -46,7 +47,6 @@
     "access": "public"
   },
   "ava": {
-    "verbose": true,
     "extensions": [
       "scss"
     ],
@@ -56,18 +56,21 @@
     ],
     "files": [
       "tests/*.scss",
-      "!**/_*/**",
-      "!**/_*"
+      "!tests/_*/**",
+      "!tests/_*"
     ],
     "sources": [
       "_index.scss",
       "scss/**/*.scss",
-      "!**/_*/**"
+      "!scss/_*/**"
     ]
   },
   "release-it": {
     "github": {
       "release": true
     }
+  },
+  "dependencies": {
+    "core-js": "^3.6.4"
   }
 }

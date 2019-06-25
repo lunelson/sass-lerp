@@ -5,7 +5,10 @@ var hooks = require('require-extension-hooks');
 hooks('.scss').push(() => {
   return `
     const path = require('path');
+
     const writeFile = require('write');
+    const stripComments = require('strip-css-comments');
+
     const test = require('ava');
     const compilers = {
       dartsass: require('sass'),
@@ -31,7 +34,7 @@ hooks('.scss').push(() => {
       test(path.basename(__filename, path.extname(__filename))+'['+compiler+']', t => {
         return render(compilers[compiler], __filename).then(css => {
           writeFile.sync(outFile, css);
-          t.snapshot(css);
+          t.snapshot(stripComments(css, { preserve: false }));
         });
       });
     });
