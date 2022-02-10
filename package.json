@@ -33,7 +33,7 @@
     "@lunelson/sass-throw": "^2.1.0",
     "ava": "^2.4.0",
     "del": "^5.1.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "require-extension-hooks": "^0.3.3",
     "sass": "^1.25.0",
     "strip-css-comments": "^4.1.0",
